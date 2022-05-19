@@ -59,9 +59,11 @@ public class TodoController {
 	}
 	
 	@PutMapping("/{id}")
-	public ResponseEntity<Todo> update(@PathVariable Long id, @RequestBody CreateTodoDTO todoDTO) {
+	public ResponseEntity<Todo> update(@PathVariable Long id, @RequestBody @Valid CreateTodoDTO todoDTO, BindingResult result) {
+		if (result.hasFieldErrors())
+			throw new BadRequestBodyException("The request body is invalid", result.getFieldErrors());
+
 		Todo todoUpdated = this.todoService.update(id, todoDTO.toTodo());
-		
 		return ResponseEntity.ok(todoUpdated);
 	}
 	
